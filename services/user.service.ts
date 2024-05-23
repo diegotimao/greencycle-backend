@@ -1,6 +1,6 @@
 import connection from "../models/connection";
 import UserModel from "../models/user.model";
-import User from "../interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 
 class UserService {
   public model: UserModel;
@@ -9,9 +9,13 @@ class UserService {
     this.model = new UserModel(connection);
   }
 
-  public async getAll(): Promise <User[]> {
+  public async getAll(): Promise <IUser[]> {
     const users = await this.model.getAll();
     return users;
+  }
+
+  public async create(user: IUser): Promise <IUser | string> {
+    return this.model.create(user);
   }
 }
 
