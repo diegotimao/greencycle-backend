@@ -47,6 +47,18 @@ class UserModel {
     }
   }
 
+  public async updated(id: number, user: IUser) {
+    try {
+      const { name, email, cpf, city, state, password_hash } = user;
+
+      await this.connection.execute(
+        'UPDATE users SET name=?, email=?, cpf=?, city=?, state=?, password_hash=? WHERE id=?', [name, email, cpf, city, state, password_hash, id]
+      )
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  };
+  
   private async userExists(field: string, value: string): Promise<boolean> {
     const [rows] = await this.connection.execute(`SELECT ${field} FROM users WHERE ${field} = ?`, [value]);
     return Array.isArray(rows) && rows.length > 0;
