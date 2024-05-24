@@ -1,8 +1,9 @@
 import connection from "../models/connection";
 import UserModel from "../models/user.model";
-import { IUser } from "../interfaces/user.interface";
+import { IUser, IUserService } from "../interfaces/user.interface";
+import { NotFoundError } from "restify-errors";
 
-class UserService {
+class UserService implements IUserService {
   public model: UserModel;
 
   constructor() {
@@ -21,6 +22,16 @@ class UserService {
 
   public async create(user: IUser): Promise <IUser | string> {
     return this.model.create(user);
+  }
+
+  public async updated(id: number, user: IUser): Promise<void> {
+    const userFound = await this.model.getById(id);
+
+    if (!userFound) {
+      throw new NotFoundError('User notfound')
+    }
+
+    return this.model.updated(id, user);
   }
 }
 
