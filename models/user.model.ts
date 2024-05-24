@@ -9,9 +9,16 @@ class UserModel {
   }
 
   public async getAll(): Promise<IUser[]> {
-    const result = await this.connection.execute('SELECT * FROM users');
+    const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users');
     const [rows] = result;
     return rows as IUser[];
+  }
+
+  public async getById(id: number): Promise<IUser> {
+    const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users WHERE id=?', [id]);
+    const [rows] = result;
+    const [user] = rows as IUser[];
+    return user;
   }
 
   public async create(user: IUser): Promise<IUser | string> {
