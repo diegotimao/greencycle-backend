@@ -14,6 +14,11 @@ class UserService {
     return users;
   }
 
+  public async getById(id: number): Promise<IUser> {
+    const user = await this.model.getById(id);
+    return user;
+  }
+
   public async create(user: IUser): Promise <IUser | string> {
     return this.model.create(user);
   }
