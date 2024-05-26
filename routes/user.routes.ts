@@ -9,6 +9,6 @@ router.get('/users', userController.getAll);
 router.get('/user/:id', userController.getById);
 router.post('/users/register', userController.create);
 router.post('/user/:id', userController.updated);
-
+router.delete('/user/:id', userController.remove);
 
 export default router;
