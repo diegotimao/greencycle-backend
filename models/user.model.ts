@@ -58,7 +58,17 @@ class UserModel {
       throw new Error(error.message)
     }
   };
-  
+
+  public async remove(id: number): Promise<boolean> {
+    try {
+      const [result] = await this.connection.execute('DELETE FROM users WHERE id=?', [id])
+      const affectedRows = (result as any).affectedRows;
+      return affectedRows > 0;
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+
   private async userExists(field: string, value: string): Promise<boolean> {
     const [rows] = await this.connection.execute(`SELECT ${field} FROM users WHERE ${field} = ?`, [value]);
     return Array.isArray(rows) && rows.length > 0;
