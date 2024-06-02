@@ -9,16 +9,30 @@ class UserModel {
   }
 
   public async getAll(): Promise<IUser[]> {
-    const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users');
-    const [rows] = result;
-    return rows as IUser[];
+    try {
+      const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users');
+      const [rows] = result;
+      return rows as IUser[];
+    } catch (error: any) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
+      }
+      throw new Error("Falha ao buscar usuários!")
+    }
   }
 
   public async getById(id: number): Promise<IUser> {
-    const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users WHERE id=?', [id]);
-    const [rows] = result;
-    const [user] = rows as IUser[];
-    return user;
+    try {
+      const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users WHERE id=?', [id]);
+      const [rows] = result;
+      const [user] = rows as IUser[];
+      return user;
+    } catch (error: any) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
+      }
+      throw new Error("Falha ao buscar usuários!")
+    }
   }
 
   public async create(user: IUser): Promise<IUser | string> {
@@ -43,6 +57,9 @@ class UserModel {
 
       throw new Error('Error creating user');
     } catch (error: any) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
+      }
       throw new Error(error.message);
     }
   }
