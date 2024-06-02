@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import UserService from "../services/user.service";
 import { IUserController } from "../interfaces/user.interface";
@@ -8,17 +8,25 @@ class UserController implements IUserController {
   constructor(private userService = new UserService()) { }
 
   public getAll = async (_req: Request, res: Response): Promise<void> => {
-    const users = await this.userService.getAll();
-    res.status(StatusCodes.OK).json(users);
+    try {
+      const users = await this.userService.getAll();
+      res.status(StatusCodes.OK).json(users);
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json(error.message);
+    }
   }
 
   public getById = async (req: Request, res: Response): Promise<void> => {
-    const id = parseInt(req.params.id);
-    const user = await this.userService.getById(id);
-    if (!user) {
-      res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found!' })
+    try {
+      const id = parseInt(req.params.id);
+      const user = await this.userService.getById(id);
+      if (!user) {
+        res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found!' })
+      }
+      res.status(StatusCodes.OK).json(user)
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json(error.message);
     }
-    res.status(StatusCodes.OK).json(user)
   }
 
   public create = async (req: Request, res: Response): Promise<void> => {
@@ -30,7 +38,7 @@ class UserController implements IUserController {
       }
       res.status(StatusCodes.CREATED).json(result);
     } catch (error: any) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message })
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
   }
 
