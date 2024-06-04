@@ -8,6 +8,20 @@ class UserModel {
     this.connection = connection;
   }
 
+  public async login(email: string): Promise<IUser> {
+    try {
+      const result = await this.connection.execute('SELECT id, name, email, city, password_hash FROM users WHERE email=?', [email]);
+      const [rows] = result;
+      const [user] = rows as IUser[];
+      return user;
+    } catch (error: any) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
+      }
+      throw new Error("Falha ao buscar usuários!")
+    }
+  }
+
   public async getAll(): Promise<IUser[]> {
     try {
       const result = await this.connection.execute('SELECT id, name, email, cpf, state, city FROM users');
