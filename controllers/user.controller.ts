@@ -1,18 +1,29 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import UserService from "../services/user.service";
 import { IUserController } from "../interfaces/user.interface";
 import { NotFoundError } from "restify-errors";
+import { z } from "zod";
 
 class UserController implements IUserController {
   constructor(private userService = new UserService()) { }
+
+  public login = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, password } = req.body;
+      const token = await this.userService.login(email, password);
+      res.status(StatusCodes.OK).json({ 'token': token});
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
+    }
+  }
 
   public getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
       const users = await this.userService.getAll();
       res.status(StatusCodes.OK).json(users);
     } catch (error: any) {
-      res.status(StatusCodes.NOT_FOUND).json(error.message);
+      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
     }
   }
 
@@ -21,11 +32,11 @@ class UserController implements IUserController {
       const id = parseInt(req.params.id);
       const user = await this.userService.getById(id);
       if (!user) {
-        res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found!' })
+        res.status(StatusCodes.NOT_FOUND).json({ "error": 'User not found!' })
       }
       res.status(StatusCodes.OK).json(user)
     } catch (error: any) {
-      res.status(StatusCodes.NOT_FOUND).json(error.message);
+      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message});
     }
   }
 
@@ -34,11 +45,15 @@ class UserController implements IUserController {
       const user = req.body;
       const result = await this.userService.create(user);
       if (typeof result === 'string') {
-        res.status(StatusCodes.CONFLICT).json({ message: result });
+        res.status(StatusCodes.CONFLICT).json({ "error": result });
       }
       res.status(StatusCodes.CREATED).json(result);
     } catch (error: any) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ "error": error.errors[0].message});
+      } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": error.message });
+      }
     }
   }
 
@@ -49,7 +64,7 @@ class UserController implements IUserController {
       await this.userService.updated(id, user);
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error: any) {
-      res.status(StatusCodes.NOT_FOUND).json(error.message)
+      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message})
     }
   }
 
@@ -57,7 +72,7 @@ class UserController implements IUserController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: 'ID do usuário inálido' });
+        res.status(StatusCodes.BAD_REQUEST).json({ "error": 'ID do usuário inálido' });
         return
       }
       const resultado = await this.userService.remove(id);
@@ -69,9 +84,9 @@ class UserController implements IUserController {
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.status(StatusCodes.NOT_FOUND).json({ error: error.message });
+        res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
       } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Ocorreu um erro inesperado' });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": 'Ocorreu um erro inesperado' });
       }
     }
   }
