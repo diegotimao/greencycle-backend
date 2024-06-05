@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 const userSchema = z.object({
   name: z.string(),
@@ -28,8 +28,10 @@ export class User {
     this.password_hash = userData.password_hash;
   };
 
-  static create(userData: unknown): User {
+  static validate(userData: unknown): User {
     const parseData = userSchema.parse(userData);
     return new User(parseData);
   }
 }
+
+export { userSchema, ZodError };

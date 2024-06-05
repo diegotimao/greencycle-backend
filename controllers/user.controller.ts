@@ -1,12 +1,14 @@
+import { z } from "zod";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { NotFoundError } from "restify-errors";
+
 import UserService from "../services/user.service";
 import { IUserController } from "../interfaces/user.interface";
-import { NotFoundError } from "restify-errors";
-import { z } from "zod";
+import { User } from "../models/User";
 
 class UserController implements IUserController {
-  constructor(private userService = new UserService()) { }
+  constructor(private userService = new UserService()) { };
 
   public login = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -15,8 +17,8 @@ class UserController implements IUserController {
       res.status(StatusCodes.OK).json({ 'token': token});
     } catch (error: any) {
       res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
-    }
-  }
+    };
+  };
 
   public getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
@@ -24,8 +26,8 @@ class UserController implements IUserController {
       res.status(StatusCodes.OK).json(users);
     } catch (error: any) {
       res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
-    }
-  }
+    };
+  };
 
   public getById = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -33,40 +35,43 @@ class UserController implements IUserController {
       const user = await this.userService.getById(id);
       if (!user) {
         res.status(StatusCodes.NOT_FOUND).json({ "error": 'User not found!' })
-      }
+      };
       res.status(StatusCodes.OK).json(user)
     } catch (error: any) {
       res.status(StatusCodes.NOT_FOUND).json({ "error": error.message});
-    }
-  }
+    };
+  };
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = req.body;
+      User.validate(user);
       const result = await this.userService.create(user);
-      if (typeof result === 'string') {
-        res.status(StatusCodes.CONFLICT).json({ "error": result });
-      }
-      res.status(StatusCodes.CREATED).json(result);
+      res.status(StatusCodes.CREATED).json({ token: result });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        res.status(400).json({ "error": error.errors[0].message});
+        res.status(StatusCodes.CONFLICT).json({ "error": error.errors[0].message});
       } else {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": error.message });
-      }
-    }
-  }
+      };
+    };
+  };
 
   public updated = async (req: Request, res: Response): Promise<void> => {
     try {
       const id = Number(req.params.id);
       const user = req.body;
+      User.validate(user);
       await this.userService.updated(id, user);
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error: any) {
-      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message})
-    }
-  }
+      if (error instanceof z.ZodError) {
+        res.status(StatusCodes.CONFLICT).json({ "error": error.errors[0].message});
+      } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": error.message });
+      };
+    };
+  };
 
   public remove = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -74,22 +79,22 @@ class UserController implements IUserController {
       if (isNaN(id)) {
         res.status(StatusCodes.BAD_REQUEST).json({ "error": 'ID do usuário inálido' });
         return
-      }
+      };
       const resultado = await this.userService.remove(id);
       if (resultado) {
         res.status(StatusCodes.NO_CONTENT).end();
       } else {
         throw new NotFoundError('Usuário não encontrado');
-      }
+      };
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
       } else {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": 'Ocorreu um erro inesperado' });
-      }
-    }
-  }
-}
+      };
+    };
+  };
+};
 
 export default UserController;
