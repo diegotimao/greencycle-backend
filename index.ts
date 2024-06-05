@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import 'express-async-errors';
 
 import UsersRoutes from './routes/user.routes';
+import EcopontoRoutes from './routes/ecoponto.routes';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(UsersRoutes);
+app.use(EcopontoRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction): void => {
   const { name, message, details } = err as any;
