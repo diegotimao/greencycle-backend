@@ -6,7 +6,7 @@ export default class EcopontoModel {
 
   constructor(connection: Pool) {
     this.connection = connection;
-  }
+  };
 
   public async getAll(): Promise<IEcoponto[]> {
     try {
@@ -16,8 +16,21 @@ export default class EcopontoModel {
     } catch (error: any) {
       if (error.code === 'ECONNREFUSED') {
         throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
-      }
+      };
       throw new Error("Falha ao buscar usuários!")
-    }
-  }
-}
+    };
+  };
+
+  public async getById(id: number): Promise<IEcoponto[]> {
+    try {
+      const ecoponto = await this.connection.execute('SELECT * FROM ecoponto WHERE id=?', [id]);
+      const [rows] = ecoponto;
+      return rows as IEcoponto[];
+    } catch (error: any) {
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
+      }
+      throw new Error('Falha ao buscar o usuário.');
+    };
+  };
+};
