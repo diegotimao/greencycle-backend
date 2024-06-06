@@ -6,15 +6,24 @@ export default class EcopontoService {
   public model: EcopontoModel;
 
   constructor() {
-    this.model = new EcopontoModel(connection)
-  }
+    this.model = new EcopontoModel(connection);
+  };
 
   public async getAll(): Promise<IEcoponto[]> {
     try {
-      const resuslt = await this.model.getAll();
-      return resuslt;
+      const ecopontos = await this.model.getAll();
+      return ecopontos;
     } catch (error: any) {
       throw new Error(error.message)
-    }
-  }
+    };
+  };
+
+  public async getById(id: number): Promise<IEcoponto[]> {
+    try {
+      const ecoponto = await this.model.getById(id);
+      return ecoponto;
+    } catch (error: any) {
+      throw new Error(error.message);
+    };
+  };
 }
