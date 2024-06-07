@@ -21,16 +21,30 @@ export default class EcopontoModel {
     };
   };
 
-  public async getById(id: number): Promise<IEcoponto[]> {
+  public async getById(id: number): Promise<IEcoponto | boolean> {
     try {
-      const ecoponto = await this.connection.execute('SELECT * FROM ecoponto WHERE id=?', [id]);
-      const [rows] = ecoponto;
-      return rows as IEcoponto[];
+      const result = await this.connection.execute('SELECT * FROM ecoponto WHERE id=?', [id]);
+      const [rows] = result;
+      const [ecoponto] = rows as IEcoponto[];
+      if (ecoponto === undefined) {
+        return false;
+      }
+      return ecoponto;
     } catch (error: any) {
       if (error.code === 'ECONNREFUSED') {
         throw new Error('Falha ao conectar ao banco de dados. Por favor tente mais tarde!');
       }
       throw new Error('Falha ao buscar o usuário.');
+    };
+  };
+
+  public async remove(id: number): Promise<boolean> {
+    try {
+      const [result] = await this.connection.execute('DELETE FROM ecoponto WHERE id=?', [id]);
+      const affectedRows = (result as any).affectedRows;
+      return affectedRows > 0;  
+    } catch (error: any) {
+      throw new Error(error.message);
     };
   };
 };
