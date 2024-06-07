@@ -22,9 +22,9 @@ class BcryptService {
       const match = await bcrypt.compare(password, hashPassword);
       return match;
     } catch (error) {
-      throw new Error('Erro ao verificar a senha')
-    }
-  }
-}
+      throw new Error('Erro ao verificar a senha');
+    };
+  };
+};
 
 export default BcryptService;
