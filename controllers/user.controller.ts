@@ -34,11 +34,11 @@ class UserController implements IUserController {
       const id = parseInt(req.params.id);
       const user = await this.userService.getById(id);
       if (!user) {
-        res.status(StatusCodes.NOT_FOUND).json({ "error": 'User not found!' })
+        res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário não cadastrado.' })
       };
       res.status(StatusCodes.OK).json(user)
     } catch (error: any) {
-      res.status(StatusCodes.NOT_FOUND).json({ "error": error.message});
+      res.status(StatusCodes.NOT_FOUND).json({ message: error.message});
     };
   };
 
@@ -50,9 +50,9 @@ class UserController implements IUserController {
       res.status(StatusCodes.CREATED).json({ token: result });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        res.status(StatusCodes.CONFLICT).json({ "error": error.errors[0].message});
+        res.status(StatusCodes.CONFLICT).json({ message: error.errors[0].message});
       } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": error.message });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
       };
     };
   };
@@ -66,9 +66,9 @@ class UserController implements IUserController {
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        res.status(StatusCodes.CONFLICT).json({ "error": error.errors[0].message});
+        res.status(StatusCodes.CONFLICT).json({ message: error.errors[0].message});
       } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": error.message });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
       };
     };
   };
@@ -77,21 +77,21 @@ class UserController implements IUserController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-        res.status(StatusCodes.BAD_REQUEST).json({ "error": 'ID do usuário inálido' });
+        res.status(StatusCodes.BAD_REQUEST).json({ message: 'ID do usuário inálido' });
         return
       };
       const resultado = await this.userService.remove(id);
       if (resultado) {
         res.status(StatusCodes.NO_CONTENT).end();
       } else {
-        throw new NotFoundError('Usuário não encontrado');
+        res.status(StatusCodes.BAD_REQUEST).json({ message: 'Usuário não existe.'});
       };
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.status(StatusCodes.NOT_FOUND).json({ "error": error.message });
+        res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
       } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ "error": 'Ocorreu um erro inesperado' });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Ocorreu um erro inesperado' });
       };
     };
   };
