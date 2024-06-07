@@ -18,10 +18,23 @@ export default class EcopontoService {
     };
   };
 
-  public async getById(id: number): Promise<IEcoponto[]> {
+  public async getById(id: number): Promise<IEcoponto | boolean> {
     try {
       const ecoponto = await this.model.getById(id);
       return ecoponto;
+    } catch (error: any) {
+      throw new Error(error.message);
+    };
+  };
+
+  public async remove(id: number): Promise<boolean> {
+    try {
+      const ecoponto = await this.model.getById(id);
+      if (!ecoponto) {
+        return false;
+      };
+      await this.model.remove(id);
+      return true;
     } catch (error: any) {
       throw new Error(error.message);
     };
