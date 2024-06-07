@@ -96,7 +96,7 @@ class UserModel {
       const affectedRows = (result as any).affectedRows;
       return affectedRows > 0;
     } catch (error: any) {
-      throw new Error(error.message)
+      throw new Error(error.message);
     }
   }
 
