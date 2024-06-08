@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { SignOptions } from 'jsonwebtoken';
 import { IUser } from '../interfaces/user.interface';
+import { IEcoponto } from '../interfaces/ecoponto.interface';
 
 const SECRET = process.env.JWT_SECRET || 'jwt_secret';
 
@@ -16,7 +17,7 @@ export default class AuthToken {
     }
   }
 
-  async generateToken(payload: IUser) {
+  async generateToken(payload: IUser | IEcoponto) {
     return jwt.sign(payload, SECRET, this.jwtConfig);
   }
 
