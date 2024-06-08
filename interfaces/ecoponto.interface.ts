@@ -10,5 +10,5 @@ export interface IEcoponto {
   neighborhood: string,
   state: string,
   phone: string,
-  password: string
+  password_hash: string
 }
