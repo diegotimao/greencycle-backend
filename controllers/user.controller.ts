@@ -5,7 +5,7 @@ import { NotFoundError } from "restify-errors";
 
 import UserService from "../services/user.service";
 import { IUserController } from "../interfaces/user.interface";
-import { User } from "../models/User";
+import { User } from "../validations/User";
 
 class UserController implements IUserController {
   constructor(private userService = new UserService()) { };
