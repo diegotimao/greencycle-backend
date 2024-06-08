@@ -98,7 +98,7 @@ class UserModel {
     } catch (error: any) {
       throw new Error(error.message);
     }
-  }
+  };
 
   private async userExists(field: string, value: string): Promise<boolean> {
     const [rows] = await this.connection.execute(`SELECT ${field} FROM users WHERE ${field} = ?`, [value]);
