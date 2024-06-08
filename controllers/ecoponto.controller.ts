@@ -1,6 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import EcopontoService from "../services/ecoponto.service";
 import { Request, Response } from "express";
+import { Ecoponto } from "../validations/Ecoponto";
+import { z } from "zod";
 
 export default class EcopontoController {
   constructor(private ecopontoService = new EcopontoService()) { };
@@ -46,4 +48,59 @@ export default class EcopontoController {
       res.status(StatusCodes.NO_CONTENT).json({ message: error.message });
     };
   };
-};
+
+  public create = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const ecoponto = req.body;
+      Ecoponto.validate(ecoponto);
+      const token = await this.ecopontoService.create(ecoponto);
+      res.status(StatusCodes.OK).json({ tpeken: token });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        res.status(StatusCodes.CONFLICT).json({ message: error.errors[0].message});
+      } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+      };
+    };
+  };
+
+  public update = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      const ecoponto = req.body;
+      Ecoponto.validate(ecoponto);
+      const newEcoponto = await this.ecopontoService.update(id, ecoponto);
+      res.status(StatusCodes.OK).json(newEcoponto);
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_IMPLEMENTED).json({ message: error.message });
+    };
+  };
+}; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
