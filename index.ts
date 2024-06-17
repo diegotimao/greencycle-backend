@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import { StatusCodes } from 'http-status-codes';
+import cors from 'cors';
 import 'express-async-errors';
 
 import UsersRoutes from './routes/user.routes';
@@ -10,6 +11,8 @@ const app = express();
 app.use(express.json());
 
 const PORT = 8080;
+
+app.use(cors());
 
 app.get('/', (req: Request, res: Response) => {
   res.status(StatusCodes.OK).send("Servidor ativo na porta 8080");
