@@ -31,7 +31,7 @@ class TransacaoModel {
       await connection.rollback();
       throw new Error(error.message);
     } finally {
-      connection.release();
+      connection.release();  
     };
   };
 };
