@@ -10,4 +10,14 @@ export interface ITransacao {
     quilogramas: number;
     price: number;
   }>;
+  data_transacao: string,
+  data_aprovacao: string
+}
+
+export interface IConfirmationTransacao {
+  endToEndId: string,
+  txid: string,
+  chave: string,
+  valor: number,
+  horario: string,
 }
