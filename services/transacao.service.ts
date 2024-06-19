@@ -1,4 +1,4 @@
-import { ITransacao } from "../interfaces/transacao.interface";
+import { IConfirmationTransacao, ITransacao } from "../interfaces/transacao.interface";
 import connection from "../models/connection";
 import TransacaoModel from "../models/transacao.model";
 
@@ -13,6 +13,23 @@ class TransacaoService {
     try {
       const transacaoResponse = await this.model.create(transacao);
       return transacaoResponse;  
+    } catch (error: any) {
+      throw new Error(error.message);
+    };
+  };
+
+  public async confirmationTrasacao(confirmation: IConfirmationTransacao): Promise<ITransacao> {
+    try {
+      const confirmationResponse = await this.model.confirmationTransacao(confirmation);
+      
+      if (confirmationResponse.status_payments !== 'Aprovado') {
+        throw new Error("Não foi possivel aprovar a transação");
+      }
+
+      // buscar os dados da conta do usuario 
+      
+
+      return confirmationResponse;
     } catch (error: any) {
       throw new Error(error.message);
     };
