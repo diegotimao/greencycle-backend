@@ -21,6 +21,16 @@ class TransacaoController {
       };
     };
   };
+
+  public confirmationTransacao = async (req: Request, res: Response) => {
+    try {
+      const confirmation = req.body;
+      const confirmationResponse = await this.transacaoService.confirmationTrasacao(confirmation);
+      res.status(StatusCodes.OK).json(confirmationResponse);
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json({ error: error.message });  
+    };
+  };
 };
 
 export default TransacaoController;
