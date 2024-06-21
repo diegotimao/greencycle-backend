@@ -36,14 +36,23 @@ class TransacaoModel {
     };
   };
 
-  public async getAllTransacaoUser(id_user: number): Promise<ITransacao[]> {
+  public async getAllTransacaoUser(idUser: number): Promise<ITransacao[]> {
     try {
-      const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM transacao WHERE transacao.id_user=?', [id_user]);
+      const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM transacao WHERE transacao.id_user=?', [idUser]);
       const tramnsacaoArray = rows as ITransacao[];
       return tramnsacaoArray;
     } catch (error) {
-      throw new Error("Não foi possivel buscar as transações.")
+      throw new Error("Não foi possivel buscar as transações.");
     };
+  };
+
+  public async getAllTransacaoEcoponto(idEcoponto: number): Promise<ITransacao[]> {
+    try {
+      const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM transacao WHERE transacao.id_ecoponto=?', [idEcoponto]);
+      return rows as ITransacao[];
+    } catch (error) {
+      throw new Error("Não foi possivel buscar as transações.")
+    }
   };
 
   public async confirmationTransacao(confirmation: IConfirmationTransacao): Promise<ITransacao> {
@@ -84,9 +93,9 @@ class TransacaoModel {
   };
 
   // Retorna a conta do usuario
-  public async getAccount(id_user: number): Promise<IAccount> {
+  public async getAccount(idUser: number): Promise<IAccount> {
     try {
-      const [accountRows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM account WHERE id_user=?', [id_user]);
+      const [accountRows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM account WHERE id_user=?', [idUser]);
 
       if (accountRows.length === 0) {
         throw new Error("Não existe conta com o id do useuario informado.");
