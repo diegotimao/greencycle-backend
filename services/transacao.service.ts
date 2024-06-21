@@ -18,12 +18,20 @@ class TransacaoService {
     };
   };
 
-  public async getAllTransacaoUser(id_user: number): Promise<ITransacao[]> {
+  public async getAllTransacaoUser(idUser: number): Promise<ITransacao[]> {
     try {
-      const transacaoResponse = await this.model.getAllTransacaoUser(id_user);
+      const transacaoResponse = await this.model.getAllTransacaoUser(idUser);
       return transacaoResponse;  
     } catch (error: any) {
       throw new Error(error.message);
+    };
+  };
+
+  public async getAllTrasancaoEcoponto(idEcoponto: number): Promise<ITransacao[]> {
+    try {
+      return await this.model.getAllTransacaoEcoponto(idEcoponto);
+    } catch (error: any) {
+      throw new Error(error.message);  
     };
   };
 
