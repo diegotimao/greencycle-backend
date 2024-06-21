@@ -18,6 +18,15 @@ class TransacaoService {
     };
   };
 
+  public async getAllTransacaoUser(id_user: number): Promise<ITransacao[]> {
+    try {
+      const transacaoResponse = await this.model.getAllTransacaoUser(id_user);
+      return transacaoResponse;  
+    } catch (error: any) {
+      throw new Error(error.message);
+    };
+  };
+
   // Confirmar a transacao como paga
   public async confirmationTrasacao(confirmation: IConfirmationTransacao): Promise<ITransacao> {
     try {
