@@ -32,6 +32,16 @@ class TransacaoController {
     };
   };
 
+  public getAllTransacaoEcoponto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idEcoponto = Number(req.params.id);
+      const transacaoResponse = await this.transacaoService.getAllTrasancaoEcoponto(idEcoponto);
+      res.status(StatusCodes.OK).json(transacaoResponse);
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json({error: error.message})
+    };
+  };
+
   public confirmationTransacao = async (req: Request, res: Response) => {
     try {
       const confirmation = req.body;
