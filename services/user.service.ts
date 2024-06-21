@@ -82,6 +82,14 @@ class UserService implements IUserService {
     await this.model.remove(id);
     return true;
   };
+
+  public async getPointsAndQuilosUser(idUser: number): Promise<unknown> {
+    try {
+      return await this.model.getPointsAndQuilosUser(idUser);
+    } catch (error: any) {
+      throw new Error(error.message);  
+    };
+  };
 };
 
 export default UserService;
