@@ -22,6 +22,16 @@ class TransacaoController {
     };
   };
 
+  public getAllTransacaoUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id_user = Number(req.params.id);
+      const transacaoResponse = await this.transacaoService.getAllTransacaoUser(id_user);
+      res.status(StatusCodes.OK).json(transacaoResponse);
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json({"errror": error.message});
+    };
+  };
+
   public confirmationTransacao = async (req: Request, res: Response) => {
     try {
       const confirmation = req.body;
