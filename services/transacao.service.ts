@@ -12,24 +12,39 @@ class TransacaoService {
   public async create(transacao: ITransacao): Promise<ITransacao> {
     try {
       const transacaoResponse = await this.model.create(transacao);
-      return transacaoResponse;  
+      return transacaoResponse;
     } catch (error: any) {
       throw new Error(error.message);
     };
   };
 
+  // Confirmar a transacao como paga
   public async confirmationTrasacao(confirmation: IConfirmationTransacao): Promise<ITransacao> {
     try {
-      const confirmationResponse = await this.model.confirmationTransacao(confirmation);
-      
-      if (confirmationResponse.status_payments !== 'Aprovado') {
+      const confirmationTransacao = await this.model.confirmationTransacao(confirmation);
+
+      if (confirmationTransacao.status_payments !== 'Aprovado') {
         throw new Error("Não foi possivel aprovar a transação");
-      }
+      };
 
-      // buscar os dados da conta do usuario 
-      
+      await this.convertToPointsAndBalance(confirmationTransacao);
 
-      return confirmationResponse;
+      return confirmationTransacao;
+    } catch (error: any) {
+      throw new Error(error.message);
+    };
+  };
+
+  // converte real para pontos
+  public async convertToPointsAndBalance(transacao: ITransacao): Promise<void> {
+    try {
+      const accountRows = await this.model.getAccount(transacao.id_user);
+      const pointValue = 2;
+      const totalAmount = transacao.total_price;
+      const totalPoints = Math.floor(totalAmount / pointValue);
+      const saldo = totalAmount % pointValue;
+
+      await this.model.updatedAccount(accountRows, totalAmount, totalPoints, saldo, transacao.id_user);
     } catch (error: any) {
       throw new Error(error.message);
     };
