@@ -95,6 +95,16 @@ class UserController implements IUserController {
       };
     };
   };
+
+  public getPointsAndQuilosUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idUser = Number(req.params.id);
+      const points = await this.userService.getPointsAndQuilosUser(idUser);
+      res.status(StatusCodes.OK).json(points)
+    } catch (error: any) {
+      res.status(StatusCodes.NOT_FOUND).json({error: error.message})
+    };
+  };
 };
 
 export default UserController;
