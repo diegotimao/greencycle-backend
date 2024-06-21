@@ -12,7 +12,7 @@ export interface ITransacao {
   }>;
   data_transacao: string,
   data_aprovacao: string
-}
+};
 
 export interface IConfirmationTransacao {
   endToEndId: string,
@@ -20,4 +20,12 @@ export interface IConfirmationTransacao {
   chave: string,
   valor: number,
   horario: string,
+};
+
+export interface IAccount {
+  id: number;
+  id_user: number;
+  real_balance: number;
+  total_points: number;
+  saldo: number;
 }
