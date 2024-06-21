@@ -36,6 +36,15 @@ class TransacaoModel {
     };
   };
 
+  public async getAllTransacaoUser(id_user: number): Promise<ITransacao[]> {
+    try {
+      const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute('SELECT * FROM transacao WHERE transacao.id_user=?', [id_user]);
+      const tramnsacaoArray = rows as ITransacao[];
+      return tramnsacaoArray;
+    } catch (error) {
+      throw new Error("Não foi possivel buscar as transações.")
+    };
+  };
 
   public async confirmationTransacao(confirmation: IConfirmationTransacao): Promise<ITransacao> {
     try {
