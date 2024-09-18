@@ -22,6 +22,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^4.6.3",
     "@types/restify-errors": "^4.3.9",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

@@ -28,7 +28,7 @@ export default class AuthToken {
         SECRET,
         this.jwtConfig
       ) as jwt.JwtPayload;
-      return autorization.role;
+      return autorization as IUser | IEcoponto;
     } catch (error) {
       throw new Error('O token digitado não é valido.')
     }
